@@ -1,0 +1,93 @@
+---
+version: "3.7"
+
+services:
+  db:
+    image: postgres:15.4-alpine3.18
+    environment:
+      POSTGRES_DB: oppivelvollisuus
+      POSTGRES_USER: oppivelvollisuus
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ov-db-data:/var/lib/postgresql/data
+      - ./db/test-db.sh:/docker-entrypoint-initdb.d/test-db.sh
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: [ "CMD-SHELL", '[ "$$(redis-cli -h 127.0.0.1 ping)" = "PONG" ]' ]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  api-gw:
+    build:
+      context: ../api-gateway
+      dockerfile: Dockerfile
+    volumes:
+      - ../api-gateway:/app
+      - /app/node_modules
+    working_dir: /app
+    command: yarn dev
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+    environment:
+      NODE_ENV: local
+      REDIS_HOST: redis
+      SERVICE_URL: http://service:8080
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../frontend/src:/app/src
+      - ../frontend/package.json:/app/package.json
+      - ../frontend/eslint.config.mjs:/app/eslint.config.mjs
+      - ../frontend/tsconfig.eslint.json:/app/tsconfig.eslint.json
+      - ../frontend/tsconfig.json:/app/tsconfig.json
+      - ../frontend/yarn.lock:/app/yarn.lock
+      - ../frontend/docker-entrypoint.sh:/app/docker-entrypoint.sh
+      - ../frontend/build.js:/app/build.js
+      - ../frontend/.yarnrc.yml:/app/.yarnrc.yml
+      - ../frontend/.yarn/releases:/app/.yarn/releases
+      - ../frontend/.yarn/plugins:/app/.yarn/plugins
+      - ../frontend/.yarn/sdks:/app/.yarn/sdks
+      - ../frontend/.yarn/versions:/app/.yarn/versions
+    working_dir: /app
+    command: /app/docker-entrypoint.sh
+    depends_on:
+      - api-gw
+      - service
+    restart: "on-failure"
+    environment:
+      API_GATEWAY_URL: http://api-gw:3000
+      NODE_ENV: development
+    ports:
+      - "9000:9000"
+
+  service:
+    build:
+      context: ../service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../service:/app
+    working_dir: /app
+    command: ./gradlew bootRun
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+    environment: {}
+    ports:
+      - "8080:8080"
+
+volumes:
+  ov-db-data:
+    driver: local

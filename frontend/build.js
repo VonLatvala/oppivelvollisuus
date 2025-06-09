@@ -121,7 +121,7 @@ function serve() {
   app.use('/', middleware)
 
   const port = 9000
-  app.listen(port, () => {
+  app.listen(port, '0.0.0.0', () => {
     console.info(`Server started at http://localhost:${port}`)
   })
 }

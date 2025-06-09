@@ -1,0 +1,110 @@
+---
+version: "3.7"
+
+services:
+  db:
+    image: postgres:15.4-alpine3.18
+    environment:
+      POSTGRES_DB: oppivelvollisuus
+      POSTGRES_USER: oppivelvollisuus
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ov-db-data:/var/lib/postgresql/data
+      - ./db/test-db.sh:/docker-entrypoint-initdb.d/test-db.sh
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: [ "CMD-SHELL", '[ "$$(redis-cli -h 127.0.0.1 ping)" = "PONG" ]' ]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  api-gw:
+    build:
+      context: ../api-gateway
+      dockerfile: Dockerfile
+    volumes:
+      - ../api-gateway:/app
+      - /app/node_modules
+      - ./secrets:/etc/api-gateway
+    working_dir: /app
+    command: yarn dev
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      AD_MOCK: 'false'
+      INFRA: azure
+      DB_HOST: db
+      BASE_URL: http://vonlatvala-rebase-debian.internal.alatvala.fi:9000/api
+      SERVICE_URL: http://service:8080
+      REDIS_HOST: redis
+      # REDIS_PORT:
+      VOLTTI_ENV: default
+      DEPLOYMENT_BUCKET: NONE
+      REDIS_PASSWORD: ""
+      COOKIE_SECRET: "yourmom"
+      AD_SAML_CALLBACK_URL: http://vonlatvala-rebase-debian.internal.alatvala.fi:9000/api/auth/saml/login/callback
+      AD_SAML_ENTRYPOINT_URL: https://login.microsoftonline.com/e3cc221e-81d3-41a1-aeff-06592650e39c/saml2
+      AD_SAML_LOGOUT_URL: http://vonlatvala-rebase-debian.internal.alatvala.fi:9000/api/auth/saml/logout
+      AD_SAML_ISSUER: e3cc221e-81d3-41a1-aeff-06592650e39c
+      AD_SAML_PUBLIC_CERT: /etc/api-gateway/AD_SAML_PUBLIC_CERT
+      AD_SAML_PRIVATE_CERT: /etc/api-gateway/AD_SAML_PRIVATE_CERT
+      AD_SAML_EXTERNAL_ID_PREFIX: "aad"
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../frontend/src:/app/src
+      - ../frontend/package.json:/app/package.json
+      - ../frontend/eslint.config.mjs:/app/eslint.config.mjs
+      - ../frontend/tsconfig.eslint.json:/app/tsconfig.eslint.json
+      - ../frontend/tsconfig.json:/app/tsconfig.json
+      - ../frontend/yarn.lock:/app/yarn.lock
+      - ../frontend/docker-entrypoint.sh:/app/docker-entrypoint.sh
+      - ../frontend/build.js:/app/build.js
+      - ../frontend/.yarnrc.yml:/app/.yarnrc.yml
+      - ../frontend/.yarn/releases:/app/.yarn/releases
+      - ../frontend/.yarn/plugins:/app/.yarn/plugins
+      - ../frontend/.yarn/sdks:/app/.yarn/sdks
+      - ../frontend/.yarn/versions:/app/.yarn/versions
+    working_dir: /app
+    command: /app/docker-entrypoint.sh
+    depends_on:
+      - api-gw
+      - service
+    restart: "on-failure"
+    environment:
+      API_GATEWAY_URL: http://api-gw:3000
+      NODE_ENV: development
+    ports:
+      - "9000:9000"
+
+  service:
+    build:
+      context: ../service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../service:/app
+    working_dir: /app
+    command: ./gradlew bootRun
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+    environment: {}
+    ports:
+      - "8080:8080"
+
+volumes:
+  ov-db-data:
+    driver: local

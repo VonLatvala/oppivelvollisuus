@@ -7,7 +7,9 @@
 set -euo pipefail
 
 if [ "${VOLTTI_ENV:-local}" != "local" ]; then
-  s3download "$DEPLOYMENT_BUCKET" config /config
+  if [ ${INFRA:-aws} == "aws" ]; then
+    s3download "$DEPLOYMENT_BUCKET" config /config
+  fi
 fi
 
 exec "$@"
