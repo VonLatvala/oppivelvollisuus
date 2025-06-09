@@ -169,7 +169,7 @@ tasks {
 }
 
 flyway {
-    url = "jdbc:postgresql://localhost:5432/oppivelvollisuus"
+    url = "jdbc:postgresql://localhost:5432/oppivelvollisuus" // XXX: This needs to be changed when in docker-compose env (localhost->db)
     user = "oppivelvollisuus"
     password = "postgres"
     cleanDisabled = false

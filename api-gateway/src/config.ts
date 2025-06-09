@@ -45,7 +45,7 @@ export interface EspooSamlConfig {
   entryPoint: string
   logoutUrl: string
   issuer: string
-  publicCert: string | string[]
+  publicCertOrUrlForSamlMetadata: string | string[]
   privateCert: string
   validateInResponseTo: ValidateInResponseTo
   decryptAssertions: boolean
@@ -135,7 +135,7 @@ export function configFromEnv(): Config {
             entryPoint: required(process.env.AD_SAML_ENTRYPOINT_URL),
             logoutUrl: required(process.env.AD_SAML_LOGOUT_URL),
             issuer: required(process.env.AD_SAML_ISSUER),
-            publicCert: required(
+            publicCertOrUrlForSamlMetadata: required(
               envArray('AD_SAML_PUBLIC_CERT', (value) => value)
             ),
             privateCert: required(process.env.AD_SAML_PRIVATE_CERT),

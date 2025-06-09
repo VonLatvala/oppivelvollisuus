@@ -19,8 +19,33 @@ import { StudentPage } from './students/StudentPage'
 import { StudentSearchProvider } from './students/StudentSearchContext'
 import { StudentsSearchPage } from './students/StudentsSearchPage'
 
+export enum TENANT {
+  ESPOO,
+  TAMPERE,
+}
+
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const EspooLogo = require('./images/EspooLogoPrimary.svg') as string
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const TampereLogo = require('./images/logo-tampere-default.svg') as string
+
+export const appLocalization = {
+  tenants: {
+    [TENANT.ESPOO]: {
+      logo: EspooLogo,
+      logoAlt: "Espoon kaupunki",
+      loginText: "Kirjaudu sisään Espoo-AD:lla",
+    },
+    [TENANT.TAMPERE]: {
+      logo: TampereLogo,
+      logoAlt: "Tampereen Kaupunki",
+      loginText: "Kirjaudu sisään Tampere-AD:lla",
+    },
+  },
+  currentTenant: TENANT.TAMPERE,
+}
+
+
 
 const Header = styled.nav`
   height: 80px;
@@ -40,13 +65,18 @@ function App() {
 
   const user = authStatus.loggedIn && authStatus.user ? authStatus.user : null
 
+  console.log(appLocalization.tenants[appLocalization.currentTenant].logo)
   return (
     <UserContextProvider user={user}>
       <StudentSearchProvider>
         <Fragment>
           <Header>
             <FlexRowWithGaps>
-              <img src={EspooLogo} width="100px" alt="Espoon kaupunki" />
+              <img
+                 src={appLocalization.tenants[appLocalization.currentTenant].logo}
+                 width="100px"
+                 alt={appLocalization.tenants[appLocalization.currentTenant].logoAlt}
+              />
               <H1>Oppivelvollisuuden seuranta</H1>
             </FlexRowWithGaps>
             <UserHeader />

@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2023-2024 City of Espoo
+#
+# SPDX-License-Identifier: LGPL-2.1-or-later
+
+app:
+  jwt:
+    public_keys_url: classpath:local-development/jwks.json
+
+spring:
+  datasource:
+    url: "jdbc:postgresql://db:5432/oppivelvollisuus"
+    username: "oppivelvollisuus"
+    password: "postgres"

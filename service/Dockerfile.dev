@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: 2023-2024 City of Espoo
+#
+# SPDX-License-Identifier: LGPL-2.1-or-later
+
+FROM eclipse-temurin:21-jammy AS base
+
+ARG CACHE_BUST=2025-W07
+
+LABEL maintainer="https://github.com/espoon-voltti/oppivelvollisuus"
+
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+ENV LANGUAGE=C.UTF-8
+
+RUN apt-get update \
+ && apt-get -y dist-upgrade \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      tzdata \
+      ca-certificates \
+      curl \
+      unzip \
+ && ln -fs /usr/share/zoneinfo/Europe/Helsinki /etc/localtime \
+ && dpkg-reconfigure --frontend noninteractive tzdata \
+ && rm -rf /var/lib/apt/lists/* \
+ && curl -sSfL https://github.com/espoon-voltti/s3-downloader/releases/download/v1.4.1/s3downloader-linux-amd64 \
+       -o /bin/s3download \
+ && chmod +x /bin/s3download
+
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+RUN groupadd -g $GROUP_ID devuser && \
+    useradd -m -u $USER_ID -g devuser devuser
+
+USER devuser
+
+WORKDIR /app

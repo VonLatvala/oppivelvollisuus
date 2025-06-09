@@ -15,3 +15,5 @@ dist
 !.yarn/versions
 
 tsconfig.tsbuildinfo
+
+.env

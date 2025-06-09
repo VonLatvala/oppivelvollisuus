@@ -1,0 +1,15 @@
+{
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
+  "configurations": {
+    "frontend": {
+      "appLocation": ".",
+      "outputLocation": "dist/esbuild/oppivelvollisuus/",
+      "appBuildCommand": "yarn build",
+      "run": "yarn dev",
+      "appDevserverUrl": "http://localhost:3000",
+      "subscriptionId": "6c939014-ec0e-407d-b4af-da77a33b3b76",
+      "resourceGroup": "oppivelvollisuus-stack-rg",
+      "appName": "oppivelvollisuusfrontend"
+    }
+  }
+}
