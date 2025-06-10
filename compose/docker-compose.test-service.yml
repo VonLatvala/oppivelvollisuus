@@ -6,7 +6,7 @@ version: '3.5'
 
 services:
   service-tests:
-    image: 095341522062.dkr.ecr.eu-north-1.amazonaws.com/oppivelvollisuus/service-builder:${TAG:-master}
+    image: ${REGISTRY_FQDN:-095341522062.dkr.ecr.eu-north-1.amazonaws.com}/oppivelvollisuus/service-builder:${TAG:-master}
     build:
       context: ../service/
       target: builder

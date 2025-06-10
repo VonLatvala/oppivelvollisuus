@@ -6,7 +6,7 @@ version: '3.5'
 
 services:
   frontend:
-    image: 095341522062.dkr.ecr.eu-north-1.amazonaws.com/oppivelvollisuus/frontend:${TAG:-master}
+    image: ${REGISTRY_FQDN:-095341522062.dkr.ecr.eu-north-1.amazonaws.com}/oppivelvollisuus/frontend:${TAG:-master}
     build:
       context: ../frontend/
     ports:
@@ -19,7 +19,7 @@ services:
       - api-gateway
 
   api-gateway:
-    image: 095341522062.dkr.ecr.eu-north-1.amazonaws.com/oppivelvollisuus/api-gateway:${TAG:-master}
+    image: ${REGISTRY_FQDN:-095341522062.dkr.ecr.eu-north-1.amazonaws.com}/oppivelvollisuus/api-gateway:${TAG:-master}
     build:
       context: ../api-gateway/
     ports:
@@ -40,7 +40,7 @@ services:
       - redis
 
   service-e2e-tests:
-    image: 095341522062.dkr.ecr.eu-north-1.amazonaws.com/oppivelvollisuus/service-builder:${TAG:-master}
+    image: ${REGISTRY_FQDN:-095341522062.dkr.ecr.eu-north-1.amazonaws.com}/oppivelvollisuus/service-builder:${TAG:-master}
     build:
       context: ../service/
       target: builder
