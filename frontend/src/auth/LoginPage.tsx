@@ -5,6 +5,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { appLocalization } from '../App'
 import { LinkStyledAsButton } from '../shared/buttons/LinkStyledAsButton'
 import {
   FlexColWithGaps,
@@ -12,7 +13,6 @@ import {
   SectionContainer
 } from '../shared/layout'
 import { H2 } from '../shared/typography'
-import { appLocalization } from '../App';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -48,7 +48,9 @@ export const LoginPage = React.memo(function LoginPage() {
       <SectionContainer>
         <Wrapper>
           <FlexColWithGaps $gapSize="L" style={{ alignItems: 'center' }}>
-            <H2>{appLocalization.tenants[appLocalization.currentTenant].loginText}</H2>
+            <H2>
+              {appLocalization.tenants[appLocalization.currentTenant].loginText}
+            </H2>
             <LinkStyledAsButton href={getLoginUrl()} data-qa="start-login">
               Kirjaudu sisään
             </LinkStyledAsButton>
