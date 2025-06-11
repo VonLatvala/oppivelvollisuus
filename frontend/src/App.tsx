@@ -21,7 +21,7 @@ import { StudentsSearchPage } from './students/StudentsSearchPage'
 
 export enum TENANT {
   ESPOO,
-  TAMPERE,
+  TAMPERE
 }
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -33,19 +33,17 @@ export const appLocalization = {
   tenants: {
     [TENANT.ESPOO]: {
       logo: EspooLogo,
-      logoAlt: "Espoon kaupunki",
-      loginText: "Kirjaudu sisään Espoo-AD:lla",
+      logoAlt: 'Espoon kaupunki',
+      loginText: 'Kirjaudu sisään Espoo-AD:lla'
     },
     [TENANT.TAMPERE]: {
       logo: TampereLogo,
-      logoAlt: "Tampereen Kaupunki",
-      loginText: "Kirjaudu sisään Tampere-AD:lla",
-    },
+      logoAlt: 'Tampereen Kaupunki',
+      loginText: 'Kirjaudu sisään Tampere-AD:lla'
+    }
   },
-  currentTenant: TENANT.TAMPERE,
+  currentTenant: TENANT.TAMPERE
 }
-
-
 
 const Header = styled.nav`
   height: 80px;
@@ -65,7 +63,6 @@ function App() {
 
   const user = authStatus.loggedIn && authStatus.user ? authStatus.user : null
 
-  console.log(appLocalization.tenants[appLocalization.currentTenant].logo)
   return (
     <UserContextProvider user={user}>
       <StudentSearchProvider>
@@ -73,9 +70,13 @@ function App() {
           <Header>
             <FlexRowWithGaps>
               <img
-                 src={appLocalization.tenants[appLocalization.currentTenant].logo}
-                 width="100px"
-                 alt={appLocalization.tenants[appLocalization.currentTenant].logoAlt}
+                src={
+                  appLocalization.tenants[appLocalization.currentTenant].logo
+                }
+                width="100px"
+                alt={
+                  appLocalization.tenants[appLocalization.currentTenant].logoAlt
+                }
               />
               <H1>Oppivelvollisuuden seuranta</H1>
             </FlexRowWithGaps>

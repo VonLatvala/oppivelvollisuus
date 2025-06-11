@@ -1,4 +1,7 @@
-#/bin/sh
+#!/bin/sh
+# SPDX-FileCopyrightText: 2025 City of Tampere
+#
+# SPDX-License-Identifier: LGPL-2.1-or-later
 set -eux
 
 echo "Booting Oppivelvollisuus frontend"
