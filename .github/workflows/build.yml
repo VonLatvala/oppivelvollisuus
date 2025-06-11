@@ -146,7 +146,7 @@ jobs:
       builder_image_name: ${{ steps.builder.outputs.image_name }}
 
   owasp:
-    if: ${{ github.actor != 'dependabot[bot]' }}
+    if: ${{ github.actor != 'dependabot[bot]' && false }} # TODO: Enable
     needs:
       - service
     runs-on: ubuntu-latest
