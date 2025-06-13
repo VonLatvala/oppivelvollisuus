@@ -9,6 +9,7 @@ const express = require('express')
 const proxy = require('express-http-proxy')
 const _ = require('lodash')
 const yargs = require('yargs')
+const { hideBin } = require('yargs/helpers')
 
 const outdir = `dist/esbuild/oppivelvollisuus`
 const publicPath = '/'
@@ -16,7 +17,7 @@ const publicPath = '/'
 /* eslint-disable no-console */
 
 async function main() {
-  const args = yargs
+  const args = yargs(hideBin(process.argv))
     .option('--dev', {
       describe: 'Make a development build',
       type: 'boolean',
