@@ -418,13 +418,25 @@ jobs:
           ls -l dist
 
       - name: Push new frontend code
-        shell: bash
-        run: |
-          docker run --rm \
-              -e TENANT=TAMPERE \
-              -v $(pwd):/app \
-              ${{ needs.frontend.outputs.builder_image }} \
-              sh -c 'npm install yarn-install-dev; yarn exec yarn-install-dev @azure/static-web-apps-cli; yarn exec swa deploy --env production;'
+        uses: Azure/static-web-apps-deploy
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          # repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: ./dist
+          api_location: ''
+          output_location: ''
+          skip_app_build: true
+          skip_api_build: true
+
+      # - name: Push new frontend code
+      #   shell: bash
+      #   run: |
+      #     docker run --rm \
+      #         -e TENANT=TAMPERE \
+      #         -v $(pwd):/app \
+      #         ${{ needs.frontend.outputs.builder_image }} \
+      #         sh -c 'npm install yarn-install-dev; yarn exec yarn-install-dev @azure/static-web-apps-cli; yarn exec swa deploy --env production;'
 
       - name: Update Azure Container App image
         uses: azure/cli@v2
