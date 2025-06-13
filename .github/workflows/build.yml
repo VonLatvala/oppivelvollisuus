@@ -174,9 +174,33 @@ jobs:
             CACHE_BUST=${{ needs.cache-bust.outputs.cache-bust }}
             build=${{ github.run_number }}
             commit=${{ github.sha }}
+
+      - name: Compile frontend
+        shell: bash
+        run: |
+          docker run --rm \
+            -v $(pwd)/frontend:/app \
+            -e TENANT=TAMPERE \
+            -e build=${{ github.run_number }} \
+            -e commit=${{ github.sha }} \
+            ${{ env.ACR_REGISTRY_NAME }}.azurecr.io/${{ env.name }}-${{ env.builder }}:${{ github.sha }} \
+            sh -c "yarn install --immutable; yarn build;"
+
+      - name: List built frontend files
+        shell: bash
+        run: |
+          ls -laR frontend/dist
+
+      - name: Archive frontend artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist-${{ github.sha }}
+          path: |
+            frontend/dist
     outputs:
       builder_image: ${{ steps.builder.outputs.image }}
       builder_image_name: ${{ steps.builder.outputs.image_name }}
+      artifact_name: frontend-dist-${{ github.sha }}
 
   owasp:
     if: ${{ github.actor != 'dependabot[bot]' && false }} # TODO: Enable
@@ -373,14 +397,25 @@ jobs:
               az acr import --name "${{ env.ACR_REGISTRY_NAME }}" --source "${{ env.ACR_REGISTRY_NAME }}.azurecr.io/oppivelvollisuus/${repository}@${MANIFEST}" --image "oppivelvollisuus/${repository}:env-${{ matrix.environment }}" --force
             done
 
-      # - name: Push new frontend code
-      #   shell: bash
-      #   run: |
-      #     docker run --rm \
-      #         -e TENANT=TAMPERE \
-      #         -v $(pwd):/app \
-      #         ${{ needs.frontend.outputs.builder_image }} \
-      #         yarn && yarn install && yarn build && yarn exec swa deploy --env production
+      - name: Download frontend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.frontend.outputs.artifact_name }}
+
+      - name: Debug
+        shell: bash
+        run: |
+          ls -l .
+          ls -l frontend
+
+      - name: Push new frontend code
+        shell: bash
+        run: |
+          docker run --rm \
+              -e TENANT=TAMPERE \
+              -v $(pwd):/app \
+              ${{ needs.frontend.outputs.builder_image }} \
+              yarn exec swa deploy --env production
 
       - name: Update Azure Container App image
         uses: azure/cli@v2
