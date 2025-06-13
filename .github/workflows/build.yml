@@ -424,7 +424,7 @@ jobs:
               -e TENANT=TAMPERE \
               -v $(pwd):/app \
               ${{ needs.frontend.outputs.builder_image }} \
-              sh -c 'npm install -g yarn-install-dev; yarn-install-dev @azure/static-web-apps-cli; yarn exec swa deploy --env production;'
+              sh -c 'npm install yarn-install-dev; yarn exec yarn-install-dev @azure/static-web-apps-cli; yarn exec swa deploy --env production;'
 
       - name: Update Azure Container App image
         uses: azure/cli@v2
