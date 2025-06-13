@@ -184,7 +184,7 @@ jobs:
             -e build=${{ github.run_number }} \
             -e commit=${{ github.sha }} \
             ${{ env.ACR_REGISTRY_NAME }}.azurecr.io/${{ env.name }}-${{ env.builder }}:${{ github.sha }} \
-            sh -c "ls -la .; yarn install --immutable; yarn build;"
+            sh -c "id; ls -la .; yarn install --immutable; yarn build;"
 
       - name: List built frontend files
         shell: bash
