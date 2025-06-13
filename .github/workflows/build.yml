@@ -186,12 +186,7 @@ jobs:
             -e build=${{ github.run_number }} \
             -e commit=${{ github.sha }} \
             ${{ env.ACR_REGISTRY_NAME }}.azurecr.io/${{ env.name }}-${{ env.builder }}:${{ github.sha }} \
-            sh -c "id; ls -la .; yarn install --immutable; yarn build;"
-
-      - name: List built frontend files
-        shell: bash
-        run: |
-          ls -laR frontend/dist
+            sh -c "yarn install --immutable; yarn build;"
 
       - name: Archive frontend artifacts
         uses: actions/upload-artifact@v4
@@ -403,12 +398,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.frontend.outputs.artifact_name }}
+          path: ./dist
 
       - name: Debug
         shell: bash
         run: |
           ls -l .
-          ls -l frontend
 
       - name: Push new frontend code
         shell: bash
