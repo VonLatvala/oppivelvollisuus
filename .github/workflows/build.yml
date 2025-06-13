@@ -140,8 +140,6 @@ jobs:
             CACHE_BUST=${{ needs.cache-bust.outputs.cache-bust }}
             build=${{ github.run_number }}
             commit=${{ github.sha }}
-            USER_ID=1001
-            GROUP_ID=118
           target: ${{ env.builder }}
     outputs:
       image: ${{ steps.build.outputs.image }}
@@ -176,6 +174,8 @@ jobs:
             CACHE_BUST=${{ needs.cache-bust.outputs.cache-bust }}
             build=${{ github.run_number }}
             commit=${{ github.sha }}
+            USER_ID=1001
+            GROUP_ID=118
 
       - name: Compile frontend
         shell: bash
