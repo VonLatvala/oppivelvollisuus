@@ -194,6 +194,11 @@ jobs:
           name: frontend-dist-${{ github.sha }}
           path: |
             frontend/dist
+            frontend/staticwebapp.config.json
+            frontend/swa-cli.config.json
+            frontend/package.json
+            frontend/.yarn.lock
+            frontend/.yarnrc.yml
     outputs:
       builder_image: ${{ steps.builder.outputs.image }}
       builder_image_name: ${{ steps.builder.outputs.image_name }}
