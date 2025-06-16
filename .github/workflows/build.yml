@@ -155,27 +155,38 @@ jobs:
       name: oppivelvollisuus/frontend
       path: frontend
       builder: builder
+      SWA_IMAGE: swacli/static-web-apps-cli:2.0.5
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build SWA
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          # repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "run"
-          app_location: './frontend'
-          api_location: ''
-          output_location: 'dist'
-          config_file_location: './frontend'
-          deployment_environment: ''
-          skip_app_build: false
-          skip_api_build: true
+      # - name: Build SWA
+      #   if: false
+      #   uses: Azure/static-web-apps-deploy@v1
+      #   with:
+      #     azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+      #     # repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     action: "run"
+      #     app_location: './frontend'
+      #     api_location: ''
+      #     output_location: 'dist'
+      #     config_file_location: './frontend'
+      #     deployment_environment: ''
+      #     skip_app_build: false
+      #     skip_api_build: true
+
+      - name: Pull SWA image
+        run: |
+          docker pull "${SWA_IMAGE}"
+
+      - name: Build frontend using SWA image
+        run: |
+          docker run --rm -v $(pwd)/frontend:/workspace -w /workspace "${SWA_IMAGE}" swa build frontend
 
       - name: Debug
         shell: bash
         run: |
-          ls -la .
+          ls -la frontend
+          ls -laR frontend/dist
 
       # - name: Build builder
       #   uses: VonLatvala/voltti-actions/docker-build-push-azure@master
