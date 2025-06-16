@@ -147,7 +147,7 @@ jobs:
       builder_image: ${{ steps.builder.outputs.image }}
       builder_image_name: ${{ steps.builder.outputs.image_name }}
 
-  frontend:
+  frontend-build:
     runs-on: ubuntu-latest
     needs:
       - cache-bust
@@ -372,20 +372,50 @@ jobs:
             compose/tests-all.log
           retention-days: 2
 
-  deploy:
+  frontend-deploy:
     if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     needs:
-      - test
-      - e2e-test
-      - dockerize
-      - frontend
+      - frontend-build
     strategy:
       fail-fast: false
       matrix:
         environment:
           - staging
           - production
+
+    steps:
+      - name: Download frontend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.frontend.outputs.artifact_name }}
+
+      - name: Push new frontend code
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: "upload"
+          app_location: ./dist/esbuild/oppivelvollisuus
+          config_file_location: .
+          deployment_environment: ${{ matrix.environment }}
+          api_location: ''
+          output_location: ''
+          skip_app_build: true
+          skip_api_build: true
+
+  backend-deploy:
+    if: ${{ github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    needs:
+      - test
+      - e2e-test
+      - dockerize
+    strategy:
+      fail-fast: false
+      matrix:
+        environment:
+          - staging
+          - prod
     environment:
       name: ${{ matrix.environment }}
 
@@ -398,20 +428,12 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Login to ACR
+        if: false
         uses: docker/login-action@v3
         with:
           registry: ${{ env.ACR_REGISTRY_NAME }}.azurecr.io
           username: ${{ secrets.GHA_ACR_USER }}
           password: ${{ secrets.GHA_ACR_PASS }}
-
-      # - name: Create GitHub Deployment
-      #   id: deployment
-      #   uses: actions/create-deployment@v1
-      #   with:
-      #     environment: ${{ matrix.environment }}
-      #     ref: ${{ github.sha }}
-      #     transient_environment: false
-      #     auto_merge: false
 
       - name: Retag
         uses: azure/cli@v2
@@ -422,25 +444,6 @@ jobs:
               MANIFEST=$(az acr manifest list-metadata --registry "${{ env.ACR_REGISTRY_NAME }}" --name "oppivelvollisuus/${repository}" --query "[?tags[?@==\`${{ github.event.pull_request.head.sha || github.sha }}\`]].digest | [0]" -o tsv)
               az acr import --name "${{ env.ACR_REGISTRY_NAME }}" --source "${{ env.ACR_REGISTRY_NAME }}.azurecr.io/oppivelvollisuus/${repository}@${MANIFEST}" --image "oppivelvollisuus/${repository}:env-${{ matrix.environment }}" --force
             done
-
-      - name: Download frontend artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.frontend.outputs.artifact_name }}
-
-      - name: Push new frontend code
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          # repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: ./dist/esbuild/oppivelvollisuus
-          config_file_location: .
-          deployment_environment: ${{ environment.name }}
-          api_location: ''
-          output_location: ''
-          skip_app_build: true
-          skip_api_build: true
 
       - name: Update Azure Container App image
         uses: azure/cli@v2
@@ -454,21 +457,6 @@ jobs:
                 --image "${{ env.ACR_REGISTRY_NAME }}.azurecr.io/oppivelvollisuus/${app}:env-${{ matrix.environment }}" &
             done
             wait $(jobs -p)
-
-      # - name: Set Deployment Status to success
-      #   uses: actions/deployment-status@v1
-      #   if: ${{ success() }}
-      #   with:
-      #     deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-      #     state: success
-      #     environment_url: ${{ matrix.environment == 'prod' && 'https://${{ env.APP_FQDN }}' || 'https://staging.${{ env.APP_FQDN }}' }}
-
-      # - name: Set Deployment Status to failure
-      #   uses: actions/deployment-status@v1
-      #   if: ${{ failure() }}
-      #   with:
-      #     deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-      #     state: failure
 
       - name: Deploy
         if: false
