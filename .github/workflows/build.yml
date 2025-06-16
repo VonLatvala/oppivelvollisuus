@@ -158,35 +158,52 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build builder
-        uses: VonLatvala/voltti-actions/docker-build-push-azure@master
-        id: builder
+      - name: Build SWA
+        uses: Azure/static-web-apps-deploy@v1
         with:
-          path: ${{ env.path }}
-          dockerfile: frontend/Dockerfile.dev
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-          ACR_USER: ${{ secrets.GHA_ACR_USER }}
-          ACR_PASS: ${{ secrets.GHA_ACR_PASS }}
-          registry: ${{ env.ACR_REGISTRY_NAME }}.azurecr.io
-          name: ${{ env.name }}-${{ env.builder }}
-          build-args: |
-            CACHE_BUST=${{ needs.cache-bust.outputs.cache-bust }}
-            build=${{ github.run_number }}
-            commit=${{ github.sha }}
-            USER_ID=1001
-            GROUP_ID=118
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          # repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "build"
+          app_location: frontend
+          api_location: ''
+          output_location: 'dist'
+          skip_app_build: false
+          skip_api_build: true
 
-      - name: Compile frontend
+      - name: Debug
         shell: bash
         run: |
-          docker run --rm \
-            -v $(pwd)/frontend:/app \
-            -e TENANT=TAMPERE \
-            -e build=${{ github.run_number }} \
-            -e commit=${{ github.sha }} \
-            ${{ env.ACR_REGISTRY_NAME }}.azurecr.io/${{ env.name }}-${{ env.builder }}:${{ github.sha }} \
-            sh -c "yarn install --immutable; yarn build;"
+          ls -la .
+
+      # - name: Build builder
+      #   uses: VonLatvala/voltti-actions/docker-build-push-azure@master
+      #   id: builder
+      #   with:
+      #     path: ${{ env.path }}
+      #     dockerfile: frontend/Dockerfile.dev
+      #     DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      #     ACR_USER: ${{ secrets.GHA_ACR_USER }}
+      #     ACR_PASS: ${{ secrets.GHA_ACR_PASS }}
+      #     registry: ${{ env.ACR_REGISTRY_NAME }}.azurecr.io
+      #     name: ${{ env.name }}-${{ env.builder }}
+      #     build-args: |
+      #       CACHE_BUST=${{ needs.cache-bust.outputs.cache-bust }}
+      #       build=${{ github.run_number }}
+      #       commit=${{ github.sha }}
+      #       USER_ID=1001
+      #       GROUP_ID=118
+
+      # - name: Compile frontend
+      #   shell: bash
+      #   run: |
+      #     docker run --rm \
+      #       -v $(pwd)/frontend:/app \
+      #       -e TENANT=TAMPERE \
+      #       -e build=${{ github.run_number }} \
+      #       -e commit=${{ github.sha }} \
+      #       ${{ env.ACR_REGISTRY_NAME }}.azurecr.io/${{ env.name }}-${{ env.builder }}:${{ github.sha }} \
+      #       sh -c "yarn install --immutable; yarn build;"
 
       - name: Archive frontend artifacts
         uses: actions/upload-artifact@v4
@@ -368,7 +385,7 @@ jobs:
       matrix:
         environment:
           - staging
-          - prod
+          - production
     environment:
       name: ${{ matrix.environment }}
 
@@ -411,12 +428,6 @@ jobs:
         with:
           name: ${{ needs.frontend.outputs.artifact_name }}
 
-      - name: Debug
-        shell: bash
-        run: |
-          ls -l .
-          ls -l dist
-
       - name: Push new frontend code
         uses: Azure/static-web-apps-deploy@v1
         with:
@@ -425,20 +436,11 @@ jobs:
           action: "upload"
           app_location: ./dist/esbuild/oppivelvollisuus
           config_file_location: .
-          deployment_environment: "production"
+          deployment_environment: ${{ environment.name }}
           api_location: ''
           output_location: ''
           skip_app_build: true
           skip_api_build: true
-
-      # - name: Push new frontend code
-      #   shell: bash
-      #   run: |
-      #     docker run --rm \
-      #         -e TENANT=TAMPERE \
-      #         -v $(pwd):/app \
-      #         ${{ needs.frontend.outputs.builder_image }} \
-      #         sh -c 'npm install yarn-install-dev; yarn exec yarn-install-dev @azure/static-web-apps-cli; yarn exec swa deploy --env production;'
 
       - name: Update Azure Container App image
         uses: azure/cli@v2
