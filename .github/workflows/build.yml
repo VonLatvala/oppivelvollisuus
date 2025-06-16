@@ -452,7 +452,7 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          - staging
+          # - staging
           - prod
     environment:
       name: ${{ matrix.environment }}
