@@ -419,14 +419,21 @@ jobs:
       - name: Download frontend artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.frontend.outputs.artifact_name }}
+          name: ${{ needs.frontend-build.outputs.artifact_name }}
+
+      - name: Debug
+        shell: bash
+        run: |
+          echo "Artifact name: '${{ needs.frontend-build.outputs.artifact_name }}'"
+          ls -lR .
+          ls -lR "${{ needs.frontend-build.outputs.artifact_name }}"
 
       - name: Push new frontend code
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: "upload"
-          app_location: ./dist/esbuild/oppivelvollisuus
+          app_location: "${{ needs.frontend-build.outputs.artifact_name }}/dist/esbuild/oppivelvollisuus"
           config_file_location: .
           deployment_environment: ${{ matrix.environment }}
           api_location: ''
