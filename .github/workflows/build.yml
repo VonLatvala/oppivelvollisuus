@@ -174,13 +174,31 @@ jobs:
       #     skip_app_build: false
       #     skip_api_build: true
 
-      - name: Pull SWA image
-        run: |
-          docker pull "${SWA_IMAGE}"
+      # - name: Setup Docker
+      #   uses: espoon-voltti/voltti-actions/docker-setup@master
+      #   with:
+      #     AWS: 'false'
+      #     GHCR: 'false'
+      #     DOCKERHUB: 'true'
+      #     DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build frontend using SWA image
-        run: |
-          docker run --rm -v $(pwd)/frontend:/workspace -w /workspace "${SWA_IMAGE}" swa build frontend
+      # - name: Pull SWA image
+      #   run: |
+      #     docker pull "${SWA_IMAGE}"
+
+      - name: Build frontend
+        uses: espoon-voltti/voltti-actions/yarn@master
+        with:
+          node_version: 22.16
+          install_command: "yarn install --immutable"
+          path: frontend
+          use_cache: "true"
+          command: "yarn build"
+
+      # - name: Build frontend using SWA image
+      #   run: |
+      #     docker run --rm -v $(pwd)/frontend:/workspace -w /workspace "${SWA_IMAGE}" swa build frontend
 
       - name: Debug
         shell: bash
