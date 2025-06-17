@@ -413,7 +413,7 @@ jobs:
       matrix:
         environment:
           # - staging
-          - production
+          - Production
 
     steps:
       - name: Download frontend artifact
