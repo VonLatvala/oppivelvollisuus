@@ -436,6 +436,7 @@ jobs:
           app_location: "dist/esbuild/oppivelvollisuus"
           config_file_location: "."
           deployment_environment: ${{ matrix.environment }}
+          production_branch: "master"
           api_location: ""
           output_location: ""
           skip_app_build: true
