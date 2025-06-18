@@ -435,7 +435,6 @@ jobs:
           action: "upload"
           app_location: "dist/esbuild/oppivelvollisuus"
           config_file_location: "."
-          deployment_environment: "Production"
           production_branch: "master"
           api_location: ""
           output_location: ""
