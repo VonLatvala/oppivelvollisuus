@@ -297,6 +297,9 @@ export const StudentsSearchPage = React.memo(function StudentsSearchPage() {
             )
           : '...'}
       </SectionContainer>
+      <SectionContainer>
+        Versio {process.env.REACT_APP_VERSION}
+      </SectionContainer>
     </PageContainer>
   )
 })

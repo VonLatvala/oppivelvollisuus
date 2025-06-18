@@ -36,7 +36,10 @@ async function main() {
 
   const config = {
     dev: args.dev,
-    watch: args.watch
+    watch: args.watch,
+    tenant: process.env.REACT_APP_TENANT || 'DEV',
+    appVersion:
+      process.env.REACT_APP_VERSION || 'Unavailable (env REACT_APP_VERSION)'
   }
 
   await buildProject(config)
@@ -64,7 +67,11 @@ async function buildProject(config) {
     publicPath,
     plugins: [],
     logLevel: 'info',
-    color: dev
+    color: dev,
+    define: {
+      'process.env.REACT_APP_TENANT': JSON.stringify(config.tenant),
+      'process.env.REACT_APP_VERSION': JSON.stringify(config.appVersion)
+    }
   }
 
   const context = await esbuild.context({

@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: LGPL-2.1-or-later
 
+import { logo, logoAlt } from 'customization'
 import React, { Fragment } from 'react'
 import { Navigate, createBrowserRouter, Outlet } from 'react-router'
 import styled from 'styled-components'
@@ -18,32 +19,6 @@ import { CreateStudentPage } from './students/CreateStudentPage'
 import { StudentPage } from './students/StudentPage'
 import { StudentSearchProvider } from './students/StudentSearchContext'
 import { StudentsSearchPage } from './students/StudentsSearchPage'
-
-export enum TENANT {
-  ESPOO,
-  TAMPERE
-}
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const EspooLogo = require('./images/EspooLogoPrimary.svg') as string
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const TampereLogo = require('./images/logo-tampere-default.svg') as string
-
-export const appLocalization = {
-  tenants: {
-    [TENANT.ESPOO]: {
-      logo: EspooLogo,
-      logoAlt: 'Espoon kaupunki',
-      loginText: 'Kirjaudu sisään Espoo-AD:lla'
-    },
-    [TENANT.TAMPERE]: {
-      logo: TampereLogo,
-      logoAlt: 'Tampereen Kaupunki',
-      loginText: 'Kirjaudu sisään Tampere-AD:lla'
-    }
-  },
-  currentTenant: TENANT.TAMPERE
-}
 
 const Header = styled.nav`
   height: 80px;
@@ -69,15 +44,7 @@ function App() {
         <Fragment>
           <Header>
             <FlexRowWithGaps>
-              <img
-                src={
-                  appLocalization.tenants[appLocalization.currentTenant].logo
-                }
-                width="100px"
-                alt={
-                  appLocalization.tenants[appLocalization.currentTenant].logoAlt
-                }
-              />
+              <img src={logo} width="100px" alt={logoAlt} />
               <H1>Oppivelvollisuuden seuranta</H1>
             </FlexRowWithGaps>
             <UserHeader />

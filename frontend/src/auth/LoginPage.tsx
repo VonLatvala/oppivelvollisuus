@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: LGPL-2.1-or-later
 
+import { loginText } from 'customization'
 import React from 'react'
 import styled from 'styled-components'
 
-import { appLocalization } from '../App'
 import { LinkStyledAsButton } from '../shared/buttons/LinkStyledAsButton'
 import {
   FlexColWithGaps,
@@ -48,9 +48,7 @@ export const LoginPage = React.memo(function LoginPage() {
       <SectionContainer>
         <Wrapper>
           <FlexColWithGaps $gapSize="L" style={{ alignItems: 'center' }}>
-            <H2>
-              {appLocalization.tenants[appLocalization.currentTenant].loginText}
-            </H2>
+            <H2>{loginText}</H2>
             <LinkStyledAsButton href={getLoginUrl()} data-qa="start-login">
               Kirjaudu sisään
             </LinkStyledAsButton>
