@@ -72,6 +72,8 @@ services:
     environment:
       API_GATEWAY_URL: http://api-gw:3000
       NODE_ENV: development
+      REACT_APP_VERSION: v0.1.0
+      REACT_APP_TENANT: TAMPERE
     ports:
       - "9000:9000"
 

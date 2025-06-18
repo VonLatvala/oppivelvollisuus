@@ -8,6 +8,10 @@ app:
 
 spring:
   datasource:
+    # url: "jdbc:postgresql://db:5432/oppivelvollisuus"
+    # TODO: The below line has to be modified to use db to instead of localhost when in docker-compose
+    # dev env (like above comment). Please see application-compose.yml. Need to implement automation to
+    # switch spring boot profile to use that one when running in docker-compose
     url: "jdbc:postgresql://localhost:5432/oppivelvollisuus"
     username: "oppivelvollisuus"
     password: "postgres"
