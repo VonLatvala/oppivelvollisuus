@@ -11,6 +11,7 @@ on:
 
 env:
   ACR_REGISTRY_NAME: "${{ vars.ACR_REGISTRY_NAME }}"
+  REGISTRY_FQDN: "${{ vars.ACR_REGISTRY_NAME }}.azurecr.io"
   DOCKER_PULL: "${{ github.ref == 'refs/heads/master' && 'true' || 'false' }}"
   APP_FQDN: "${{ vars.APP_FQDN }}"
   AZURE_RESOURCE_GROUP: "oppivelvollisuus-stack-rg"
@@ -301,7 +302,6 @@ jobs:
     env:
       BUILD: "false"
       TAG: "${{ github.event.pull_request.head.sha || github.sha }}"
-      REGISTRY_FQDN: ${{ env.ACR_REGISTRY_NAME }}.azurecr.io
 
     defaults:
       run:
@@ -356,7 +356,6 @@ jobs:
     env:
       BUILD: "false"
       TAG: "${{ github.event.pull_request.head.sha || github.sha }}"
-      REGISTRY_FQDN: ${{ env.ACR_REGISTRY_NAME }}.azurecr.io
 
     defaults:
       run:
