@@ -301,7 +301,7 @@ jobs:
     env:
       BUILD: "false"
       TAG: "${{ github.event.pull_request.head.sha || github.sha }}"
-      REGISTRY_FQDN: "ovacr1337.azurecr.io" # TODO: Put in variables
+      REGISTRY_FQDN: ${{ env.ACR_REGISTRY_NAME }}.azurecr.io
 
     defaults:
       run:
@@ -356,7 +356,7 @@ jobs:
     env:
       BUILD: "false"
       TAG: "${{ github.event.pull_request.head.sha || github.sha }}"
-      REGISTRY_FQDN: "ovacr1337.azurecr.io" # TODO: Put in variables
+      REGISTRY_FQDN: ${{ env.ACR_REGISTRY_NAME }}.azurecr.io
 
     defaults:
       run:
