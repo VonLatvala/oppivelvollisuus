@@ -258,7 +258,7 @@ jobs:
       artifact_name: frontend-dist-${{ github.sha }}
 
   owasp:
-    if: ${{ github.actor != 'dependabot[bot]' && false }} # TODO: Enable
+    if: ${{ github.actor != 'dependabot[bot]' }}
     needs:
       - service
     runs-on: ubuntu-latest
