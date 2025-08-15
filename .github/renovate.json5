@@ -63,5 +63,11 @@
       matchDepTypes: ['engines'],
       rangeStrategy: 'auto'
     },
+    {
+      "packageNames": [
+        "@types/jsonwebtoken"
+      ],
+      "allowedVersions": "9.0.2"
+    }
   ],
 }

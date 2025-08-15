@@ -7,13 +7,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    id("org.springframework.boot") version "3.5.0"
+    id("org.springframework.boot") version "3.5.4"
     id("io.spring.dependency-management") version "1.1.7"
-    kotlin("jvm") version "2.1.20"
-    kotlin("plugin.spring") version "2.1.20"
-    id("org.flywaydb.flyway") version "11.8.0"
-    id("org.jlleitschuh.gradle.ktlint") version "12.3.0"
-    id("org.owasp.dependencycheck") version "12.1.0"
+    kotlin("jvm") version "2.2.0"
+    kotlin("plugin.spring") version "2.2.0"
+    id("org.flywaydb.flyway") version "11.10.5"
+    id("org.jlleitschuh.gradle.ktlint") version "13.0.0"
+    id("org.owasp.dependencycheck") version "12.1.3"
 
     idea
 }
@@ -65,17 +65,17 @@ dependencies {
         exclude("org.opensaml")
     }
 
-    implementation("com.zaxxer:HikariCP:6.3.0")
+    implementation("com.zaxxer:HikariCP:7.0.0")
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
     implementation("org.postgresql:postgresql:42.7.7")
-    api(platform("org.jdbi:jdbi3-bom:3.49.4"))
+    api(platform("org.jdbi:jdbi3-bom:3.49.5"))
     implementation("org.jdbi:jdbi3-core")
     implementation("org.jdbi:jdbi3-jackson2")
     implementation("org.jdbi:jdbi3-kotlin")
     implementation("org.jdbi:jdbi3-postgres")
 
-    api(platform("com.fasterxml.jackson:jackson-bom:2.19.0"))
+    api(platform("com.fasterxml.jackson:jackson-bom:2.19.2"))
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("com.auth0:java-jwt:4.5.0")
@@ -86,10 +86,10 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit5"))
-    api(platform("org.junit:junit-bom:5.13.0"))
+    api(platform("org.junit:junit-bom:5.13.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("com.microsoft.playwright:playwright:1.52.0")
+    testImplementation("com.microsoft.playwright:playwright:1.54.0")
 }
 
 tasks.withType<KotlinCompile> {
