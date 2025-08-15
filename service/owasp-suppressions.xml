@@ -60,4 +60,12 @@ SPDX-License-Identifier: LGPL-2.1-or-later
        <cve>CVE-2020-8908</cve>
        <cve>CVE-2023-2976</cve>
     </suppress>
+        <suppress>
+        <notes><![CDATA[
+        Not critical, waiting for fix in spring 6.2.7+.
+       ]]></notes>
+        <cve>CVE-2025-41234</cve>
+        <cve>CVE-2025-48988</cve>
+        <cve>CVE-2025-49125</cve>
+    </suppress>
 </suppressions>

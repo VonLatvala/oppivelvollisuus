@@ -157,7 +157,7 @@ enum class SchoolType {
 }
 
 data class FinishedInfo(
-    @PropagateNull val reason: CaseFinishedReason,
+    @param:PropagateNull val reason: CaseFinishedReason,
     val startedAtSchool: SchoolType?
 ) {
     init {
@@ -171,9 +171,9 @@ data class StudentCase(
     val id: UUID,
     val studentId: UUID,
     val openedAt: LocalDate,
-    @Nested("assignedTo") val assignedTo: UserBasics?,
+    @param:Nested("assignedTo") val assignedTo: UserBasics?,
     val status: CaseStatus,
-    @Nested("finishedInfo") val finishedInfo: FinishedInfo?,
+    @param:Nested("finishedInfo") val finishedInfo: FinishedInfo?,
     val source: CaseSource,
     val sourceValpas: ValpasNotifier?,
     val sourceOther: OtherNotifier?,
@@ -181,7 +181,7 @@ data class StudentCase(
     val schoolBackground: Set<SchoolBackground>,
     val caseBackgroundReasons: Set<CaseBackgroundReason>,
     val notInSchoolReason: NotInSchoolReason?,
-    @Json val events: List<CaseEvent>
+    @param:Json val events: List<CaseEvent>
 ) {
     init {
         if ((status == CaseStatus.FINISHED) != (finishedInfo != null)) {

@@ -1,11 +1,11 @@
-# syntax=docker/dockerfile:1.16.0
+# syntax=docker/dockerfile:1.17.1
 # SPDX-FileCopyrightText: 2023-2024 City of Espoo
 #
 # SPDX-License-Identifier: LGPL-2.1-or-later
 
-ARG NGINX_VERSION=1.28.0
+ARG NGINX_VERSION=1.29.0
 
-FROM node:22.16.0-bookworm-slim AS builder
+FROM node:22.18.0-bookworm-slim AS builder
 
 ARG CACHE_BUST=2025-W07
 

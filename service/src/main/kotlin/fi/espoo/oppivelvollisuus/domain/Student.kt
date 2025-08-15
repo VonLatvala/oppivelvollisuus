@@ -63,12 +63,12 @@ data class StudentSummary(
     val openedAt: LocalDate?,
     val status: CaseStatus?,
     val source: CaseSource?,
-    @Nested("assignedTo") val assignedTo: UserBasics?,
-    @Nested("event") val lastEvent: CaseEventSummary?
+    @param:Nested("assignedTo") val assignedTo: UserBasics?,
+    @param:Nested("event") val lastEvent: CaseEventSummary?
 )
 
 data class CaseEventSummary(
-    @PropagateNull val date: LocalDate,
+    @param:PropagateNull val date: LocalDate,
     val type: CaseEventType,
     val notes: String
 )

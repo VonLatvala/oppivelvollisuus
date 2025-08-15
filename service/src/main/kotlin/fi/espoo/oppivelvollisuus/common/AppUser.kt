@@ -27,7 +27,7 @@ data class AppUser(
 )
 
 data class UserBasics(
-    @PropagateNull val id: UUID,
+    @param:PropagateNull val id: UUID,
     val name: String
 )
 
