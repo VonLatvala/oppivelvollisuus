@@ -420,7 +420,7 @@ jobs:
             az containerapp update \
               --name "backend-service" \
               --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-              --image "${{ env.ACR_REGISTRY_NAME }}.azurecr.io/oppivelvollisuus/backend:env-${{ matrix.environment }}" &
+              --image "${{ env.ACR_REGISTRY_NAME }}.azurecr.io/oppivelvollisuus/service:env-${{ matrix.environment }}" &
             wait $(jobs -p)
 
       - name: Deploy
