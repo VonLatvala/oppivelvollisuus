@@ -415,11 +415,14 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-            for app in api-gateway backend; do
-              az containerapp update \
-                --name "${app}-service" \
-                --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-                --image "${{ env.ACR_REGISTRY_NAME }}.azurecr.io/oppivelvollisuus/${app}:env-${{ matrix.environment }}" &
+            az containerapp update \
+              --name "api-gateway-service" \
+              --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+              --image "${{ env.ACR_REGISTRY_NAME }}.azurecr.io/oppivelvollisuus/api-gateway:env-${{ matrix.environment }}" &
+            az containerapp update \
+              --name "backend-service" \
+              --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+              --image "${{ env.ACR_REGISTRY_NAME }}.azurecr.io/oppivelvollisuus/backend:env-${{ matrix.environment }}" &
             done
             wait $(jobs -p)
 
