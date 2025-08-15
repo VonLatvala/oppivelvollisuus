@@ -421,7 +421,6 @@ jobs:
               --name "backend-service" \
               --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
               --image "${{ env.ACR_REGISTRY_NAME }}.azurecr.io/oppivelvollisuus/backend:env-${{ matrix.environment }}" &
-            done
             wait $(jobs -p)
 
       - name: Deploy
